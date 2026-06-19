@@ -194,9 +194,10 @@ app.listen(port, () => {
 });
 
 // -----------------------------------------------------------------------------
-// Live score integration
+// Live score integration with your API key
 // -----------------------------------------------------------------------------
-const FOOTBALL_API_KEY = process.env.FOOTBALL_DATA_API_KEY;
+const FOOTBALL_API_KEY =
+  process.env.FOOTBALL_DATA_API_KEY || 'c3a49603b9ca4edb911214f696a3d6fb';
 
 async function fetchLiveScores() {
   if (!FOOTBALL_API_KEY) return;
