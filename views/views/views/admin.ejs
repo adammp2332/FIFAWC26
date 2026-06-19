@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    form.inline { display: inline; }
+    nav a { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel</h1>
+  <% if (currentUser) { %>
+    <p>Welcome, <%= currentUser.email %> (<%= currentUser.is_admin ? 'Admin' : 'User' %>) <a href="/logout">Log out</a></p>
+    <nav>
+      <a href="/">Home</a> |
+      <a href="/points">Points Table</a> |
+      <a href="/scores">Score Cards</a> |
+      <a href="/admin">Admin</a>
+    </nav>
+  <% } %>
+
+  <h2>Matches</h2>
+  <% matches.forEach(function(match) { %>
+    <form class="inline" action="/admin/update-match" method="POST">
+      <input type="hidden" name="match_id" value="<%= match.match_id %>" />
+      <table>
+        <tr>
+          <th colspan="6"><%= match.team_a %> vs <%= match.team_b %> – <%= new Date(match.match_date).toLocaleString() %></th>
+        </tr>
+        <tr>
+          <th>Stage</th>
+          <th>Actual Winner</th>
+          <th>Actual Score</th>
+          <th>Penalty Winner</th>
+          <th>Penalty Score</th>
+          <th>Actions</th>
+        </tr>
+        <tr>
+          <td>
+            <select name="stage">
+              <option value="group"     <%= match.stage === 'group'     ? 'selected' : '' %>>Group</option>
+              <option value="round_32"  <%= match.stage === 'round_32'  ? 'selected' : '' %>>Round of 32</option>
+              <option value="round_16"  <%= match.stage === 'round_16'  ? 'selected' : '' %>>Round of 16</option>
+              <option value="quarter"   <%= match.stage === 'quarter'   ? 'selected' : '' %>>Quarter-final</option>
+              <option value="semi"      <%= match.stage === 'semi'      ? 'selected' : '' %>>Semi-final</option>
+              <option value="third"     <%= match.stage === 'third'     ? 'selected' : '' %>>Third-place</option>
+              <option value="final"     <%= match.stage === 'final'     ? 'selected' : '' %>>Final</option>
+            </select>
+          </td>
+          <td><input type="text" name="actual_winner" value="<%= match.actual_winner || '' %>" placeholder="Team or draw" /></td>
+          <td><input type="text" name="actual_score"  value="<%= match.actual_score  || '' %>" placeholder="2-1" /></td>
+          <td><input type="text" name="actual_penalty_winner" value="<%= match.actual_penalty_winner || '' %>" placeholder="Team" /></td>
+          <td><input type="text" name="actual_penalty_score" value="<%= match.actual_penalty_score || '' %>" placeholder="4-3" /></td>
+          <td><button type="submit">Update</button></td>
+        </tr>
+      </table>
+    </form>
+  <% }); %>
+
+  <h3>Add New Match</h3>
+  <form action="/admin/add-match" method="POST">
+    <table>
+      <tr>
+        <th>Team A</th>
+        <th>Team B</th>
+        <th>Date/Time</th>
+        <th>Venue</th>
+        <th>Stage</th>
+        <th>Actions</th>
+      </tr>
+      <tr>
+        <td><input type="text" name="team_a" required /></td>
+        <td><input type="text" name="team_b" required /></td>
+        <td><input type="datetime-local" name="match_date" required /></td>
+        <td><input type="text" name="venue" /></td>
+        <td>
+          <select name="stage">
+            <option value="group">Group</option>
+            <option value="round_32">Round of 32</option>
+            <option value="round_16">Round of 16</option>
+            <option value="quarter">Quarter-final</option>
+            <option value="semi">Semi-final</option>
+            <option value="third">Third-place</option>
+            <option value="final">Final</option>
+          </select>
+        </td>
+        <td><button type="submit">Add Match</button></td>
+      </tr>
+    </table>
+  </form>
+
+  <h2>Users</h2>
+  <% users.forEach(function(user) { %>
+    <form class="inline" action="/admin/update-user" method="POST">
+      <input type="hidden" name="user_id" value="<%= user.user_id %>" />
+      <table>
+        <tr>
+          <td>Email: <%= user.email %></td>
+          <td>
+            Admin:
+            <select name="is_admin">
+              <option value="true"  <%= user.is_admin ? 'selected' : '' %>>Yes</option>
+              <option value="false" <%= !user.is_admin ? 'selected' : '' %>>No</option>
+            </select>
+          </td>
+          <td><button type="submit">Update</button></td>
+        </tr>
+      </table>
+    </form>
+  <% }); %>
+</body>
+</html>
