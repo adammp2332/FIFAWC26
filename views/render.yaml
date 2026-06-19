@@ -16,6 +16,6 @@ services:
           property: connectionString
       - key: SESSION_SECRET
         generateValue: true
-      # Optional: set this in Render’s UI to enable live score updates
+      # Optional: define this in Render’s UI if you prefer not to hard-code the API key
       - key: FOOTBALL_DATA_API_KEY
-        sync: c3a49603b9ca4edb911214f696a3d6fb
+        sync: false
