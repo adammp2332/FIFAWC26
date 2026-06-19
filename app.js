@@ -131,7 +131,13 @@ app.post('/predict', async (req, res) => {
   if (!req.session.user) {
     return res.redirect('/login');
   }
-  const { match_id, predicted_winner, predicted_score, predicted_penalty_winner, predicted_penalty_score } = req.body;
+  const {
+    match_id,
+    predicted_winner,
+    predicted_score,
+    predicted_penalty_winner,
+    predicted_penalty_score
+  } = req.body;
   const userId = req.session.user.user_id;
   try {
     const matchRes = await pool.query('SELECT match_date, stage FROM matches WHERE match_id = $1', [match_id]);
@@ -140,11 +146,12 @@ app.post('/predict', async (req, res) => {
     }
     const matchDate = new Date(matchRes.rows[0].match_date);
     const now = new Date();
+    // Prediction cutoff: 30 minutes before match start
     if (now > new Date(matchDate.getTime() - 30 * 60 * 1000)) {
       return res.send('Prediction window closed for this match.');
     }
     const stage = matchRes.rows[0].stage;
-    const allowedStages = ['round_32','round_16','quarter','semi','third','final'];
+    const allowedStages = ['round_32', 'round_16', 'quarter', 'semi', 'third', 'final'];
     let penWinner = null;
     let penScore = null;
     if (allowedStages.includes(stage)) {
@@ -205,7 +212,9 @@ app.get('/points', async (req, res) => {
         const predictedPenaltyScore = row.predicted_penalty_score;
         if (!actualWinner && !actualPenaltyWinner) return;
         const isKnockout = stage !== 'group';
-        const actualProgression = (actualWinner && actualWinner !== 'draw') ? actualWinner : actualPenaltyWinner;
+        const actualProgression = (actualWinner && actualWinner !== 'draw')
+          ? actualWinner
+          : actualPenaltyWinner;
         const predictedProgression = predictedPenaltyWinner || predictedWinner;
         let matchPoints = 0;
 
@@ -299,8 +308,7 @@ app.get('/scores', async (req, res) => {
 // ----------------------------------------------------------------------------
 // Live score integration (football-data.org API)
 // ----------------------------------------------------------------------------
-const FOOTBALL_API_KEY =
-  process.env.FOOTBALL_DATA_API_KEY || 'c3a49603b9ca4edb911214f696a3d6fb';
+const FOOTBALL_API_KEY = process.env.FOOTBALL_DATA_API_KEY;  // no default key
 
 async function fetchLiveScores() {
   if (!FOOTBALL_API_KEY) return;
@@ -414,8 +422,8 @@ app.post('/admin/update-user', adminOnly, async (req, res) => {
   }
 });
 
-// 404 fallback
-app.use((req,res) => {
+// Catch-all 404
+app.use((req, res) => {
   res.status(404).send('Not found');
 });
 
