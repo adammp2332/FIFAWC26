@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Score Cards</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    nav a { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Score Cards</h1>
+  <% if (currentUser) { %>
+    <p>Welcome, <%= currentUser.email %>! <a href="/logout">Log out</a></p>
+    <nav>
+      <a href="/">Matches</a> |
+      <a href="/points">Points Table</a> |
+      <a href="/scores">Score Cards</a>
+      <% if (currentUser.is_admin) { %>|
+        <a href="/admin">Admin</a>
+      <% } %>
+    </nav>
+  <% } %>
+  <table>
+    <tr>
+      <th>Match</th>
+      <th>Stage</th>
+      <th>Date</th>
+      <th>Venue</th>
+      <th>Result</th>
+    </tr>
+    <% matches.forEach(function(match) { %>
+      <tr>
+        <td><%= match.team_a %> vs <%= match.team_b %></td>
+        <td><%= match.stage %></td>
+        <td><%= new Date(match.match_date).toLocaleString() %></td>
+        <td><%= match.venue || '' %></td>
+        <td>
+          <% if (match.actual_winner) { %>
+            <%= match.actual_winner %> wins (<%= match.actual_score %>)
+            <% if (match.actual_penalty_winner) { %>
+              – penalties: <%= match.actual_penalty_winner %> (<%= match.actual_penalty_score %>)
+            <% } %>
+          <% } else { %>
+            Not yet played
+          <% } %>
+        </td>
+      </tr>
+    <% }); %>
+  </table>
+</body>
+</html>
