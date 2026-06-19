@@ -3,25 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World Cup Prediction</title>
+  <title>World Cup Predictions</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 2rem; }
     table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
     th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
     th { background-color: #f2f2f2; }
-    .submit-btn { padding: 0.5rem 1rem; background-color: #007bff; color: #fff; border: none; cursor: pointer; }
-    .submit-btn:hover { background-color: #0056b3; }
+    nav a { margin-right: 1rem; }
+    .penalty-section { margin-top: 0.5rem; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-  <h1>World Cup Match Predictions</h1>
-  <p>Select the winner and optional score for each match.</p>
+  <h1>World Cup Predictions</h1>
+  <% if (currentUser) { %>
+    <p>Welcome, <%= currentUser.email %>! <a href="/logout">Log out</a></p>
+    <nav>
+      <a href="/">Matches</a> |
+      <a href="/points">Points Table</a> |
+      <a href="/scores">Score Cards</a>
+      <% if (currentUser.is_admin) { %>|
+        <a href="/admin">Admin</a>
+      <% } %>
+    </nav>
+  <% } %>
+  <p>Select the winner or draw and optionally enter a predicted score.  For knockout rounds you can also predict the shoot‑out winner and penalty score (e.g. 4‑3).  Predictions close 30 minutes before kick‑off.</p>
   <% matches.forEach(function(match) { %>
     <form action="/predict" method="POST">
       <input type="hidden" name="match_id" value="<%= match.match_id %>" />
       <table>
         <tr>
-          <th colspan="3"><%= match.team_a %> vs <%= match.team_b %> - <%= new Date(match.match_date).toLocaleString() %></th>
+          <th colspan="3"><%= match.team_a %> vs <%= match.team_b %> – <%= new Date(match.match_date).toLocaleString() %> (<%= match.stage %>)</th>
         </tr>
         <tr>
           <td>
@@ -45,14 +56,37 @@
         </tr>
         <tr>
           <td colspan="3">
-            <label for="score-<%= match.match_id %>">Predicted score (optional, e.g. 2-1):</label>
+            <label for="score-<%= match.match_id %>">Predicted normal/extra‑time score (optional, e.g. 2‑1):</label>
             <input type="text" name="predicted_score" id="score-<%= match.match_id %>" pattern="^\\d+-\\d+$" />
           </td>
         </tr>
+        <% const allowedStages = ['round_32','round_16','quarter','semi','third','final']; %>
+        <% if (allowedStages.includes(match.stage)) { %>
+          <tr>
+            <th colspan="3">Penalty shoot‑out prediction (only if match ends draw)</th>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <div class="penalty-section">
+                <label>
+                  Penalty shoot‑out winner:
+                  <input type="radio" name="predicted_penalty_winner" value="<%= match.team_a %>" />
+                  <%= match.team_a %>
+                </label>
+                <label>
+                  <input type="radio" name="predicted_penalty_winner" value="<%= match.team_b %>" />
+                  <%= match.team_b %>
+                </label>
+              </div>
+              <div class="penalty-section">
+                <label for="pen-score-<%= match.match_id %>">Penalty shoot‑out score (optional, e.g. 4‑3):</label>
+                <input type="text" name="predicted_penalty_score" id="pen-score-<%= match.match_id %>" pattern="^\\d+-\\d+$" />
+              </div>
+            </td>
+          </tr>
+        <% } %>
         <tr>
-          <td colspan="3">
-            <button type="submit" class="submit-btn">Submit Prediction</button>
-          </td>
+          <td colspan="3"><button type="submit">Submit Prediction</button></td>
         </tr>
       </table>
     </form>
