@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Cup Prediction</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    .submit-btn { padding: 0.5rem 1rem; background-color: #007bff; color: #fff; border: none; cursor: pointer; }
+    .submit-btn:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+  <h1>World Cup Match Predictions</h1>
+  <p>Select the winner and optional score for each match.</p>
+  <% matches.forEach(function(match) { %>
+    <form action="/predict" method="POST">
+      <input type="hidden" name="match_id" value="<%= match.match_id %>" />
+      <table>
+        <tr>
+          <th colspan="3"><%= match.team_a %> vs <%= match.team_b %> - <%= new Date(match.match_date).toLocaleString() %></th>
+        </tr>
+        <tr>
+          <td>
+            <label>
+              <input type="radio" name="predicted_winner" value="<%= match.team_a %>" required />
+              <%= match.team_a %>
+            </label>
+          </td>
+          <td>
+            <label>
+              <input type="radio" name="predicted_winner" value="draw" required />
+              Draw
+            </label>
+          </td>
+          <td>
+            <label>
+              <input type="radio" name="predicted_winner" value="<%= match.team_b %>" required />
+              <%= match.team_b %>
+            </label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <label for="score-<%= match.match_id %>">Predicted score (optional, e.g. 2-1):</label>
+            <input type="text" name="predicted_score" id="score-<%= match.match_id %>" pattern="^\\d+-\\d+$" />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <button type="submit" class="submit-btn">Submit Prediction</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+  <% }); %>
+</body>
+</html>
