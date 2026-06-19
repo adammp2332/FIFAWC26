@@ -1,7 +1,7 @@
 {
-  "name": "worldcup-app",
+  "name": "worldcup-enhanced-app",
   "version": "1.0.0",
-  "description": "Simple World Cup match prediction site",
+  "description": "Enhanced World Cup prediction site with user login and points",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
@@ -12,6 +12,10 @@
     "pg": "^8.11.1",
     "dotenv": "^16.3.1",
     "body-parser": "^1.20.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "express-session": "^1.17.3",
+    "connect-pg-simple": "^7.0.0",
+    "bcrypt": "^5.1.0",
+    "axios": "^1.5.0"
   }
 }
