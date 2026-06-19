@@ -1,0 +1,17 @@
+{
+  "name": "worldcup-app",
+  "version": "1.0.0",
+  "description": "Simple World Cup match prediction site",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "pg": "^8.11.1",
+    "dotenv": "^16.3.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5"
+  }
+}
