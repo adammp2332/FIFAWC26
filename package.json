@@ -1,7 +1,7 @@
 {
   "name": "worldcup-enhanced-app",
   "version": "1.0.0",
-  "description": "Enhanced World Cup prediction site with user login and points",
+  "description": "World Cup prediction site with knockout-stage scoring and admin panel",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
